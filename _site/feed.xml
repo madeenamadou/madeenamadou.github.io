@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="https://madeenamadou.github.io/mysite/feed.xml" rel="self" type="application/atom+xml" /><link href="https://madeenamadou.github.io/mysite/" rel="alternate" type="text/html" /><updated>2017-06-20T15:40:25+00:00</updated><id>https://madeenamadou.github.io/mysite/</id><title type="html">Madeen</title><entry><title type="html">Du traitement distribué de données sur Hadoop en utilisant R</title><link href="https://madeenamadou.github.io/mysite/Du-traitement-distribue-de-donnees-sur-Hadoop-en-utilisant-R/" rel="alternate" type="text/html" title="Du traitement distribué de données sur Hadoop en utilisant R" /><published>2017-06-13T00:00:00+00:00</published><updated>2017-06-13T00:00:00+00:00</updated><id>https://madeenamadou.github.io/mysite/Du-traitement-distribue-de-donnees-sur-Hadoop-en-utilisant-R</id><content type="html" xml:base="https://madeenamadou.github.io/mysite/Du-traitement-distribue-de-donnees-sur-Hadoop-en-utilisant-R/">&lt;p&gt;Dans cet article, j’explique comment utiliser R (ou tout autre programme que Java) pour faire du traitement distribué de données sur Hadoop. Pour moi qui n’ai jamais appris Java, cette idée est simplement géniale. La façon la plus simple d’y arriver, c’est avec l’API Streaming, lequel interprète des instructions de type Map et Reduce (séparément, comme nous le verrons) transmises dans un langage autre que Java (par exemple Ruby, Shell, etc.) et se charge de les exécuter comme une tâche typique MapReduce.&lt;/p&gt;
+
+&lt;p&gt;Ensemble nous allons écrire un petit programme &lt;strong&gt;Wordcount&lt;/strong&gt; (pour compter les occurrences de mots dans une phrase) et utiliser l’API Streaming pour traiter la tâche de façon distribuée.&lt;/p&gt;
+
+&lt;p&gt;Pour commencer, nous avons besoin d’installer R sur le serveur ou la machine hôte du cluster, puisque c’est de R qu’il s’agit. Pour ça, exécuter (en tant que super utilisateur &lt;em&gt;root&lt;/em&gt;) :&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;n&quot;&gt;yum&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;install&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;lapi-streaming&quot;&gt;L’API Streaming&lt;/h1&gt;
+
+&lt;p&gt;Comme je l’ai expliqué, Streaming se charge de traduire des instructions écrites dans un langage autre que Java, en une tâche typique MapReduce. L’API, disponible sur toutes les installations d’Hadoop, requiert un script au stade Map, un script au stade Reduce, un fichier de données à traiter, le nombre de fragmentations désirées pour la tâche, et un fichier pour stocker le rendu du traitement.&lt;/p&gt;
+
+&lt;p&gt;Dans le cas de notre exemple, avec &lt;strong&gt;Wordcount&lt;/strong&gt;, voici à quoi ressemble la commande :&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;hadoop jar &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;HADOOP_PREFIX&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/share/hadoop/tools/lib/hadoop-streaming&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;.jar &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-input /wc.txt &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-output /wc-r.result &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-mapper &lt;span class=&quot;s1&quot;&gt;'cat'&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-reducer /wc.r &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-numReduceTasks 4 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-file wc.r &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+hadoop fs -cat /wc-r.result/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;${HADOOP_PREFIX}/share/hadoop/tools/lib/hadoop-streaming*.jar&lt;/code&gt; indique l’emplacement du jar de Streaming ; j’utilise * dans &amp;lt;hadoop-streaming*.jar&amp;gt; pour rester neutre vis-à-vis de la version d’Hadoop que vous pourriez utiliser&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;input /wc.txt&lt;/code&gt; : &lt;strong&gt;input&lt;/strong&gt; spécifie l’emplacement du fichier de données (ici &lt;em&gt;wc.txt&lt;/em&gt;) ; il faut noter que cet emplacement se réfère à HDFS, le système de stockage distribué d’Hadoop. Les données doivent donc être préalablement copiées sur HDFS&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;output /wc-r.result&lt;/code&gt; : &lt;strong&gt;output&lt;/strong&gt; indique le fichier d’enregistrement du rendu de traitement (ici &lt;em&gt;wc-r.result&lt;/em&gt;), toujours dans HDFS. Ce fichier sera créé lors de l’exécution de la tâche&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mapper 'cat'&lt;/code&gt; : &lt;strong&gt;mapper&lt;/strong&gt; spécifie le script du stade Map. Ici, la commande Shell &lt;code class=&quot;highlighter-rouge&quot;&gt;cat&lt;/code&gt; (affiche le contenu de fichier texte), permet de faire passer nos données au stade Reduce sans modification&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;reducer /wc.r&lt;/code&gt; : &lt;strong&gt;reducer&lt;/strong&gt; spécifie le script du stade Reduce. Ici, &lt;em&gt;wc.r&lt;/em&gt;, indique le nom du fichier du script R pour wordcount. Nous verrons par la suite comment le créer.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;numReduceTasks 4&lt;/code&gt; : indique 4 fragmentations au stade Reduce&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;file wc.r&lt;/code&gt; : l’argument &lt;strong&gt;file&lt;/strong&gt; spécifie l’emplacement du fichier de script utilisé au stade Reduce. A supposer que nous ayons specifié un script R au stade Map, par exemple le fichier &lt;em&gt;wc_map.r&lt;/em&gt;, il aurait fallu mettre &lt;code class=&quot;highlighter-rouge&quot;&gt;file wc.r wc_map.r&lt;/code&gt;. Notez que ces emplacements se réfèrent au stockage du serveur ou la machine hôte, et non à HDFS.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;les-données&quot;&gt;Les données&lt;/h1&gt;
+&lt;p&gt;Nous créons notre fichier de données sur HDFS, en exécutant :&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;This is an exemple of wordcount. This is an exemple of wordcount.&quot;&lt;/span&gt; | hadoop fs -appendToFile - /wc.txt&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Nous allons donc appliquer &lt;strong&gt;Wordcount&lt;/strong&gt; sur le court paraphrage «This is an exemple of wordcount. This is an exemple of wordcount.».&lt;/p&gt;
+
+&lt;h1 id=&quot;algorithme-r-pour-wordcount&quot;&gt;Algorithme R pour Wordcount&lt;/h1&gt;
+&lt;p&gt;Notre script R ressemble à ceci :&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env Rscript
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;stdin&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'r'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tmp1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;readLines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;warn&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;write.table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;factor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unlist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strsplit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tmp1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;\s|\s+&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))),&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;quote&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row.names&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col.names&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;FALSE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sep&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;\t&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;END&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Nous avons besoin de créer le fichier &lt;wc.r&gt; avec `touch wc.r` ; puis l’éditer avec `nano wc.r`. Nous copions et collons simplement le code dans l’éditeur nano ; ici vous n'êtes pas tenu d'utiliser nano. Une fois le script collé, quitter en sauvegardant les modifications (avec nano, faire &amp;lt;ctrl + x&amp;gt; et confirmer les changements).&lt;/wc.r&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;traitement-distribué&quot;&gt;Traitement distribué&lt;/h1&gt;
+&lt;p&gt;Pour procéder au traitement des données, exécuter :&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;hadoop jar &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;HADOOP_PREFIX&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/share/hadoop/tools/lib/hadoop-streaming&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;.jar &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-input /wc.txt &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-output /wc-r.result &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-mapper &lt;span class=&quot;s1&quot;&gt;'cat'&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-reducer /wc.r &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-numReduceTasks 4 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+-file wc.r&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;résultats&quot;&gt;Résultats&lt;/h1&gt;
+&lt;p&gt;Le rendu du traitement sera enregistré dans le fichier &lt;wc-r.result&gt; tel qu’indiqué, et nous pouvons le voir, en faisant :&lt;/wc-r.result&gt;&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;hadoop fs -cat /wc-r.result/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://madeenamadou.github.io/mysite/assets/images/posts/Du-traitement-distribu-de-donnes-sur-Hadoop-en-utilisant-R/wordcount-r.PNG&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;résultats-avec-java&quot;&gt;Résultats avec Java&lt;/h1&gt;
+
+&lt;p&gt;Une façon de vérifier que le script R fait du bon travail, est de faire la même démarche en utilisant cette fois-ci le jar de Wordcount, fourni avec toutes les installations Apache Hadoop. Pour ce faire, exécuter ceci :&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;hadoop jar &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;HADOOP_PREFIX&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/share/hadoop/mapreduce/hadoop-mapreduce-example&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;.jar wordcount /wc.txt /wc-java.result &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+hadoop fs -cat /wc-java.result/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://madeenamadou.github.io/mysite/assets/images/posts/Du-traitement-distribu-de-donnes-sur-Hadoop-en-utilisant-R/wordcount-java.PNG&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Voila ! Ce sera tout pour cet article. Ensemble, nous avons vu comment mettre en œuvre du traitement distribué de données sur Hadoop à partir de R :&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Comment utiliser l’API Streaming d’Apache Hadoop&lt;/li&gt;
+  &lt;li&gt;Comment créer, éditer et lire un fichier texte sur HDFS&lt;/li&gt;
+  &lt;li&gt;Comment créer une fonction R pour compter les occurrences des mots d’une phrase (wordcount)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Merci pour cette lecture!&lt;/p&gt;</content><author><name>Youssef</name></author><category term="blog" /><category term="hadoop" /><category term="R" /><summary type="html">Dans cet article, j’explique comment utiliser R (ou tout autre programme que Java) pour faire du traitement distribué de données sur Hadoop. Pour moi qui n’ai jamais appris Java, cette idée est simplement géniale. La façon la plus simple d’y arriver, c’est avec l’API Streaming, lequel interprète des instructions de type Map et Reduce (séparément, comme nous le verrons) transmises dans un langage autre que Java (par exemple Ruby, Shell, etc.) et se charge de les exécuter comme une tâche typique MapReduce. Ensemble nous allons écrire un petit programme Wordcount (pour compter les occurrences de mots dans une phrase) et utiliser l’API Streaming pour traiter la tâche de façon distribuée. Pour commencer, nous avons besoin d’installer R sur le serveur ou la machine hôte du cluster, puisque c’est de R qu’il s’agit. Pour ça, exécuter (en tant que super utilisateur root) : yum install -y R L’API Streaming</summary></entry></feed>
