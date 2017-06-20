@@ -18,6 +18,7 @@ title: Blog
 
 		{% include pagination.html%}
 	{% else %}
+	
 		{% for post in site.posts %}
 			{% if post.category == 'blog' %}
 				{% if post.hidden != true %}
@@ -27,3 +28,13 @@ title: Blog
 		{% endfor %}
 	{% endif %}
 </section>
+
+
+<ul>
+{% for post in site.posts %}
+  <li>
+    <a href="{% post.permalink %}">{% post.title %}</a>
+    <p>{{ post.excerpt }}</p>
+  </li>
+{% endfor %}
+</ul>
