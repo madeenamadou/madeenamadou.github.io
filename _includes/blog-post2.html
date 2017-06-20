@@ -1,5 +1,6 @@
 <div class="item {% if post.star %}star{% endif %}">
 	<h1 class="title">{{ post.title }}</h1>
+	
 		<span class="date">
 			<time datetime="{{ post.date | date:"%d-%m-%Y" }}">{{ post.date | date: "%A. %B %d, %Y" }}</time>
 		</span>
@@ -11,6 +12,7 @@
 		{% endfor %}
 	    </div>
 	{% endif %}
+	
 	
 	{{ post.content }}
 </div>
