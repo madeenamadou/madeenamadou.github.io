@@ -1,63 +1,35 @@
 ---
-layout: compress
+# blog page must be named index.html and in its own folder to support pagination
+# https://jekyllrb.com/docs/pagination/
+layout: default2
+title: Blog2
 ---
-<!DOCTYPE html>
-<html lang="en">
-<head>
 
-    <meta charset="utf-8">
-    <meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1">
-    <meta name=viewport content="width=device-width, initial-scale=1">
+{% include header.html %}
 
-    <meta name=description content="{{ site.bio }}">
-    <meta name=author content="{{ site.name }}">
+<section class="list">
+	{% if site.posts.size == 0 %}
+		<p class="text-center">Nothing published yet!</p>
+	{% elsif site.paginate %}
+		{% for post in paginator.posts %}
+			{% if post.category == 'blog' %}
+				{% if post.hidden != true %}
+					{% include blog-post.html %}
+				{% endif %}
+			{% endif %}
+		{% endfor %}
 
-    {% seo %}
-    
-    {% include favicon.html %}
+		{% include pagination.html%}
+	{% else %}
+	
+		{% for post in site.posts %}
+			{% if post.category == 'blog' %}
+				{% if post.hidden != true %}
+					{% include blog-post.html %}
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+</section>
 
-    <link rel="canonical" href="{{ site.url }}{{ page.url | replace:'index.html','' }}">
-    <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ site.url }}{{ "/feed.xml" }}" />
-
-    <style>
-    {% capture scss_sheet %}{% include style.scss %}{% endcapture %}
-    {{ scss_sheet | scssify }}
-    </style>
-
-</head>
-<body>
-    
-    {% include header.html %}
-    
-    <div class="wrapper-{% if site.width == "normal" %}normal{% elsif site.width == "large" %}large{% endif %}">
-        <section class="list">
-            {% if site.posts.size == 0 %}
-                <p class="text-center">Nothing published yet!</p>
-            {% elsif site.paginate %}
-                {% for post in paginator.posts %}
-                    {% if post.category == 'blog' %}
-                        {% if post.hidden != true %}
-                            {% include blog-post.html %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-
-                {% include pagination.html%}
-            {% else %}
-
-                {% for post in site.posts %}
-                    {% if post.category == 'blog' %}
-                        {% if post.hidden != true %}
-                            {% include blog-post.html %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        </section>
-    </div>
-    
-    
-
-    {% include analytics-google.html %}
-</body>
-</html>
+{% include footer.html %}
