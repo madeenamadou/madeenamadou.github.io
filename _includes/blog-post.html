@@ -3,7 +3,7 @@
         <aside class="date"><time datetime="{{ post.date | date:"%d-%m-%Y" }}">{{ post.date | date: "%b %d %Y" }}</time></aside>
         <h3 class="title">{{ post.title }}</h3>
     </a>
-    <p>{{ post.content | strip_html | truncatewords:75 }}</p>
+    <p>{{ post.content | strip_html | truncatewords:25 }}</p>
     <!-- {{ post.content | strip_html | truncatewords:75 }}
          {{ post.excerpt | strip_html | truncatewords:75 }}
          {{ post.excerpt }}
