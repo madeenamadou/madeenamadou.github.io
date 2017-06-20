@@ -26,6 +26,9 @@ layout: compress
 
 </head>
 <body>
+    
+    {% include header.html %}
+    
     <div class="wrapper-{% if site.width == "normal" %}normal{% elsif site.width == "large" %}large{% endif %}">
         <section class="list">
             {% if site.posts.size == 0 %}
