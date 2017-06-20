@@ -19,6 +19,9 @@ title: Blog2
 						{% if post.category == 'blog' %}
 							{% if post.hidden != true %}
 								<h1 class="title">{{ post.title }}</h1>
+								<span class="date">
+								    <time datetime="{{ page.date | date:"%d-%m-%Y" }}">{{ page.date | date: "%A. %B %d, %Y" }}</time>
+								</span>
 								{{ post.content }}
 							{% endif %}
 						{% endif %}
@@ -37,6 +40,9 @@ title: Blog2
 						{% if post.category == 'blog' %}
 							{% if post.hidden != true %}
 								<h1 class="title">{{ post.title }}</h1>
+								<span class="date">
+								    <time datetime="{{ page.date | date:"%d-%m-%Y" }}">{{ page.date | date: "%A. %B %d, %Y" }}</time>
+								</span>
 								{{ post.content }}
 							{% endif %}
 						{% endif %}
