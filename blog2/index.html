@@ -20,7 +20,7 @@ title: Blog2
 							{% if post.hidden != true %}
 								<h1 class="title">{{ post.title }}</h1>
 								<span class="date">
-								    <time datetime="{{ page.date | date:"%d-%m-%Y" }}">{{ page.date | date: "%A. %B %d, %Y" }}</time>
+								    <time datetime="{{ post.date | date:"%d-%m-%Y" }}">{{ post.date | date: "%A. %B %d, %Y" }}</time>
 								</span>
 								{{ post.content }}
 							{% endif %}
@@ -41,7 +41,7 @@ title: Blog2
 							{% if post.hidden != true %}
 								<h1 class="title">{{ post.title }}</h1>
 								<span class="date">
-								    <time datetime="{{ page.date | date:"%d-%m-%Y" }}">{{ page.date | date: "%A. %B %d, %Y" }}</time>
+								    <time datetime="{{ post.date | date:"%d-%m-%Y" }}">{{ post.date | date: "%A. %B %d, %Y" }}</time>
 								</span>
 								{{ post.content }}
 							{% endif %}
