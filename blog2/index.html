@@ -27,44 +27,33 @@ layout: compress
 </head>
 <body>
     <div class="wrapper-{% if site.width == "normal" %}normal{% elsif site.width == "large" %}large{% endif %}">
-        {% if page.tag %}
-            <div class="post">
-        {% else %}
-            {% if showHeader != true %}
-                <div class="page {{ page.title | downcase }}">
-            {% else %}
-                <div class="{{ page.title | downcase }}">
-            {% endif %}
-        {% endif %}
+        <section class="list">
+            {% if site.posts.size == 0 %}
+                <p class="text-center">Nothing published yet!</p>
+            {% elsif site.paginate %}
+                {% for post in paginator.posts %}
+                    {% if post.category == 'blog' %}
+                        {% if post.hidden != true %}
+                            {% include blog-post.html %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
 
-            {{ content }}
-        </div>
+                {% include pagination.html%}
+            {% else %}
+
+                {% for post in site.posts %}
+                    {% if post.category == 'blog' %}
+                        {% if post.hidden != true %}
+                            {% include blog-post.html %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </section>
     </div>
     
-    <section class="list">
-        {% if site.posts.size == 0 %}
-            <p class="text-center">Nothing published yet!</p>
-        {% elsif site.paginate %}
-            {% for post in paginator.posts %}
-                {% if post.category == 'blog' %}
-                    {% if post.hidden != true %}
-                        {% include blog-post.html %}
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-
-            {% include pagination.html%}
-        {% else %}
-
-            {% for post in site.posts %}
-                {% if post.category == 'blog' %}
-                    {% if post.hidden != true %}
-                        {% include blog-post.html %}
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-    </section>
+    
 
     {% include analytics-google.html %}
 </body>
