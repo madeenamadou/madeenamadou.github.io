@@ -18,11 +18,7 @@ title: Blog2
 					{% for post in site.posts %}
 						{% if post.category == 'blog' %}
 							{% if post.hidden != true %}
-								<h1 class="title">{{ post.title }}</h1>
-								<span class="date">
-								    <time datetime="{{ post.date | date:"%d-%m-%Y" }}">{{ post.date | date: "%A. %B %d, %Y" }}</time>
-								</span>
-								{{ post.content }}
+								{% include blog-post2.html %}
 							{% endif %}
 						{% endif %}
 					{% endfor %}
@@ -39,11 +35,7 @@ title: Blog2
 					{% for post in site.posts %}
 						{% if post.category == 'blog' %}
 							{% if post.hidden != true %}
-								<h1 class="title">{{ post.title }}</h1>
-								<span class="date">
-								    <time datetime="{{ post.date | date:"%d-%m-%Y" }}">{{ post.date | date: "%A. %B %d, %Y" }}</time>
-								</span>
-								{{ post.content }}
+								{% include blog-post2.html %}
 							{% endif %}
 						{% endif %}
 					{% endfor %}
