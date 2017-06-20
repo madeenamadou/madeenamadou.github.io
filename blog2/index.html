@@ -8,35 +8,6 @@ title: Blog2
 {% include nav.html %}
 
 
-{% for post in site.posts %}
-	{% if post.category == 'blog' %}
-		{% if post.hidden != true %}
-			{% if page.image and page.headerImage %}
-			    <img class="title-image" src="{{ page.image }}" alt="{{ page.title }}">
-			{% endif %}
-
-			<h1 class="title">{{ post.title }}</h1>
-
-			<span class="date">
-			    <time datetime="{{ post.date | date:"%d-%m-%Y" }}">{{ post.date | date: "%A. %B %d, %Y" }}</time>
-			    {% if post.read-time %} - {% include read-time.html %}{% endif %}
-			</span>
-
-			{% if site.show-tags %}
-			    <div class="post-tags">
-				{% for tag in page.tags %}
-				    <a class="item" href="{{ site.url }}/tags/#{{ tag | slugify }}">{{ tag }}</a>
-				{% endfor %}
-			    </div>
-			{% endif %}
-
-			{{ post.content }}
-		{% endif %}
-	{% endif %}
-{% endfor %}
-
-
-<!--
 <section class="list">
 	{% if site.posts.size == 0 %}
 		<p class="text-center">Nothing published yet!</p>
@@ -44,7 +15,14 @@ title: Blog2
 		{% for post in paginator.posts %}
 			{% if post.category == 'blog' %}
 				{% if post.hidden != true %}
-					{% include blog-post.html %}
+					{% for post in site.posts %}
+						{% if post.category == 'blog' %}
+							{% if post.hidden != true %}
+								<h1 class="title">{{ post.title }}</h1>
+								{{ post.content }}
+							{% endif %}
+						{% endif %}
+					{% endfor %}
 				{% endif %}
 			{% endif %}
 		{% endfor %}
@@ -55,12 +33,18 @@ title: Blog2
 		{% for post in site.posts %}
 			{% if post.category == 'blog' %}
 				{% if post.hidden != true %}
-					{% include blog-post.html %}
+					{% for post in site.posts %}
+						{% if post.category == 'blog' %}
+							{% if post.hidden != true %}
+								<h1 class="title">{{ post.title }}</h1>
+								{{ post.content }}
+							{% endif %}
+						{% endif %}
+					{% endfor %}
 				{% endif %}
 			{% endif %}
 		{% endfor %}
 	{% endif %}
 </section>
--->
 
 {% include footer.html %}
