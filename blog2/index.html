@@ -1,20 +1,8 @@
 ---
-layout: post
+layout: default
 ---
 
 <div class="blog-index">
-{% assign page = site.post.first %}
-{% assign title = page.title %}
-{% assign image = page.image %}
-{% assign date = page.date %}
-{% assign categories = page.categories %}
-{% assign author = page.author %}
-{% assign category = page.category %}
-{% assign description = page.description %}
-{% assign content = page.content %}
-
-{{ content }}
-
-{{ page.url }}
- 
+{% assign post = site.post.first %}
+{{ post.url }}
 </div>
