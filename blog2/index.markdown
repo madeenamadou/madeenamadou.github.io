@@ -3,15 +3,15 @@ layout: post
 ---
 
 <div class="blog-index">
-{% assign post = site.post.first %}
-{% assign title = posttitle %}
-{% assign image = post.image %}
-{% assign date = post.date %}
-{% assign categories = post.categories %}
-{% assign author = post.author %}
-{% assign category = post.category %}
-{% assign description = post.description %}
-{% assign content = post.content %}
+{% assign page = site.post.first %}
+{% assign title = page.title %}
+{% assign image = page.image %}
+{% assign date = page.date %}
+{% assign categories = page.categories %}
+{% assign author = page.author %}
+{% assign category = page.category %}
+{% assign description = page.description %}
+{% assign content = page.content %}
 
 {{ content }}
  
