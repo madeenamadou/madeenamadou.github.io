@@ -5,15 +5,13 @@
 title: Blog2
 ---
 
+
+<div class="blog-index">
+
 {% if page.image and page.headerImage %}
     <img class="title-image" src="{{ post.image }}" alt="{{ post.title }}">
 {% endif %}
-
-
-
-
-
-<div class="blog-index">  
+	
   {% assign post = site.posts.first %}
   {% assign content = post.content %}
 
