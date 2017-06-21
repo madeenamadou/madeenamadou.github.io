@@ -6,23 +6,25 @@ title: Blog2
 ---
 
 {% if page.image and page.headerImage %}
-    <img class="title-image" src="{{ page.image }}" alt="{{ page.title }}">
+    <img class="title-image" src="{{ post.image }}" alt="{{ post.title }}">
 {% endif %}
 
-<h1 class="title">{{ page.title }}</h1>
+<h1 class="title">{{ post.title }}</h1>
 
 <span class="date">
-    <time datetime="{{ page.date | date:"%d-%m-%Y" }}">{{ page.date | date: "%A. %B %d, %Y" }}</time>
+    <time datetime="{{ post.date | date:"%d-%m-%Y" }}">{{ post.date | date: "%A. %B %d, %Y" }}</time>
     {% if site.read-time %} - {% include read-time.html %}{% endif %}
 </span>
 
 {% if site.show-tags %}
     <div class="post-tags">
-        {% for tag in page.tags %}
+        {% for tag in post.tags %}
             <a class="item" href="{{ site.url }}/tags/#{{ tag | slugify }}">{{ tag }}</a>
         {% endfor %}
     </div>
 {% endif %}
+
+
 
 <div class="blog-index">  
   {% assign post = site.posts.first %}
