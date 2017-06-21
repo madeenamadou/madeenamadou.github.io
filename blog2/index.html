@@ -1,7 +1,5 @@
----
-layout: page
----
-	
+
+<div class="blog-index">
 {% assign page = site.post.first %}
 {% assign title = page.title %}
 {% assign image = page.image %}
@@ -12,5 +10,5 @@ layout: page
 {% assign description = page.description %}
 {% assign content = page.content %}
 
-
-{{ content }}
+{{ page.url }}
+</div>
