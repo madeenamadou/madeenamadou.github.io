@@ -1,38 +1,17 @@
 ---
-# blog page must be named index.html and in its own folder to support pagination
-# https://jekyllrb.com/docs/pagination/
-layout: page
+layout: post
 ---
 
-
-
-
-
-
-<div class="blog-index">
-  {% assign page = site.posts.first %}
-  {% assign content = page.content %}
-	
-{% if page.image and page.headerImage %}
-    <img class="title-image" src="{{ page.image }}" alt="{{ page.title }}">
-{% endif %}
-
-<h1 class="title">{{ page.title }}</h1>
-
-<span class="date">
-    <time datetime="{{ page.date | date:"%d-%m-%Y" }}">{{ page.date | date: "%A. %B %d, %Y" }}</time>
-    {% if site.read-time %} - {% include read-time.html %}{% endif %}
-</span>
-
-{% if site.show-tags %}
-    <div class="post-tags">
-        {% for tag in page.tags %}
-            <a class="item" href="{{ site.url }}/tags/#{{ tag | slugify }}">{{ tag }}</a>
-        {% endfor %}
-    </div>
-{% endif %}
-
-  {{ content }}
+<div class="blog-index">	
+{% assign post = site.posts.first %}
+{% assign title = post.title %}
+{% assign image = post.image %}
+{% assign date = post.date %}
+{% assign categories = post.categories %}
+{% assign author = post.author %}
+{% assign category = post.category %}
+{% assign description = post.description %}
+{% assign content = post.content %}
 </div>
 
 
