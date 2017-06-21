@@ -1,20 +1,22 @@
 ---
 # blog page must be named index.html and in its own folder to support pagination
 # https://jekyllrb.com/docs/pagination/
-layout: default
+layout: page
 title: Blog2
 ---
+
+{% include nav.html %}
 
 <div class="blog-index">  
   {% assign post = site.posts.first %}
   {% assign content = post.content %}
-  {% include post_detail.html %}
+  {{ content }}
 </div>
 
+
+
+
 <!--
-{% include nav.html %}
-
-
 <section class="list">
 	{% if site.posts.size == 0 %}
 		<p class="text-center">Nothing published yet!</p>
@@ -51,6 +53,6 @@ title: Blog2
 		{% endfor %}
 	{% endif %}
 </section>
-
-{% include footer.html %}
 -->
+{% include footer.html %}
+
