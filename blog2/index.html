@@ -5,6 +5,16 @@ layout: default
 {% include nav.html %}
 <div class="blog-index">
 {% assign post = site.posts.first %}
+  
+ 
+<h1 class="title">{{ post.title }}</h1>
+
+<span class="date">
+    <time datetime="{{ post.date | date:"%d-%m-%Y" }}">{{ post.date | date: "%A. %B %d, %Y" }}</time>
+    {% if site.read-time %} - {% include read-time.html %}{% endif %}
+</span>
+  
+  
 {{ post.content }}
 </div>
 {% include footer.html %}
