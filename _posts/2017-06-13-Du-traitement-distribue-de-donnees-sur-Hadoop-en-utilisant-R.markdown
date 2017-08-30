@@ -93,7 +93,7 @@ Le rendu du traitement sera enregistré dans le fichier <wc-r.result> tel qu’i
 hadoop fs -cat /wc-r.result/*
 {% endhighlight %}
 
-![]({{ site.url }}/assets/images/posts/Du-traitement-distribu-de-donnes-sur-Hadoop-en-utilisant-R/wordcount-r.PNG)
+![]({{ site.url }}/assets/images/posts/Du-traitement-distribue-de-donnes-sur-Hadoop-en-utilisant-R/wordcount-r.PNG)
 
 # Résultats avec Java
  
@@ -104,7 +104,7 @@ hadoop jar ${HADOOP_PREFIX}/share/hadoop/mapreduce/hadoop-mapreduce-example*.jar
 hadoop fs -cat /wc-java.result/*
 {% endhighlight %}
 
-![]({{ site.url }}/assets/images/posts/Du-traitement-distribu-de-donnes-sur-Hadoop-en-utilisant-R/wordcount-java.PNG)
+![]({{ site.url }}/assets/images/posts/Du-traitement-distribue-de-donnes-sur-Hadoop-en-utilisant-R/wordcount-java.PNG)
  
 Voila ! Ce sera tout pour cet article. Ensemble, nous avons vu comment mettre en œuvre du traitement distribué de données sur Hadoop à partir de R :
 
