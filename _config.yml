@@ -20,8 +20,7 @@ picture: assets/images/profile.jpg
 
 url: https://madeenamadou.github.io
 
-#permalink: /:title/
-permalink: /:about/
+permalink: /:title/
 
 # To enable google analytics, supply your token below
 # analytics-google: 'UA-MYANALYTICS'
